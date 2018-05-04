@@ -110,6 +110,10 @@
 
 (defvar save-place)
 
+(defvar disaster-build-root-rel nil
+  "Directory local variable for build root directory relative to
+project root directory.")
+
 ;;;###autoload
 (defvar disaster-find-build-root-functions nil
   "Functions to call to get the build root directory from the project directory.
@@ -288,7 +292,10 @@ convenience. If LOOKS is not specified, it'll default to
 
 (defun disaster-find-build-root (project-root)
   (and project-root
-       (or (let (build-root
+       (or (when disaster-build-root-rel
+	     (file-name-as-directory
+	      (expand-file-name disaster-build-root-rel project-root)))
+	   (let (build-root
 		 (funcs disaster-find-build-root-functions))
 	     (while (and (null build-root) funcs)
 	       (setq build-root (funcall (car funcs) project-root)
